@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "4KbXUkgZntknnW1Z33EF+S0DB7I=",
+			"path": "github.com/gomodule/redigo/redis",
+			"revision": "09d84710e01a746165eadd36e85d25e0e1923cff",
+			"revisionTime": "2019-11-08T16:41:05Z"
+		}
+	],
+	"rootPath": "wosimple"
+}
