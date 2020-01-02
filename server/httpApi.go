@@ -1,18 +1,49 @@
 package server
 
 import (
+	"encoding/json"
+	"log"
 	"net/http"
 	db "wosimple/db"
 )
 
+type ResData struct {
+	Code string      `json:"code"`
+	Msg  string      `json:"msg"`
+	Data interface{} `json:"data"`
+}
+
+var (
+	resData *ResData = new(ResData)
+)
+
 func Count(w http.ResponseWriter, r *http.Request) {
-	res, _ := db.ExitsKey("Count")
-	if res == 0 {
-		db.SetRedisString("Count", 1)
-	} else {
-		db.Incr("Count")
+	r.ParseForm()
+	param := r.Form.Get("param")
+	param_map := make(map[string]string)
+	err := json.Unmarshal([]byte(param), &param_map)
+	if err != nil {
+		log.Println("param 转型错误:", err)
 	}
-	count, _ := db.GetRedisString("Count")
-	var body string = "current count is " + count
-	w.Write([]byte(body))
+	Count := param_map["Count"]
+	res, _ := db.ExitsKey(Count)
+	if res == 0 {
+		db.SetRedisString(Count, 1)
+	} else {
+		db.Incr(Count)
+	}
+	count, _ := db.GetRedisString(Count)
+	resData.Data = count
+	resData.renderJson(&w)
+}
+
+func (d *ResData) renderJson(w *http.ResponseWriter) {
+	b, err := json.Marshal(d)
+	if err != nil {
+		log.Println(err)
+	}
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")             //允许访问所有域
+	(*w).Header().Add("Access-Control-Allow-Headers", "Content-Type") //header的类型
+	(*w).Header().Set("content-type", "application/json")             //返回数据格式是json
+	(*w).Write(b)
 }
