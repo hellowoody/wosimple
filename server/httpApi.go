@@ -2,6 +2,7 @@ package server
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	db "wosimple/db"
@@ -34,6 +35,26 @@ func Count(w http.ResponseWriter, r *http.Request) {
 	}
 	count, _ := db.GetRedisString(Count)
 	resData.Data = count
+	resData.renderJson(&w)
+}
+
+func GetVersion(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	param := r.Form.Get("param")
+	fmt.Println(param)
+	resData.Data = "v0.1"
+	resData.Code = "0"
+	resData.Msg = "操作成功"
+	resData.renderJson(&w)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	param := r.Form.Get("param")
+	fmt.Println(param)
+	resData.Data = "{\"sessionId\":\"123456\",\"userId\":\"aa\",\"userName\":\"zhangsan\"}"
+	resData.Code = "0"
+	resData.Msg = "登陆成功"
 	resData.renderJson(&w)
 }
 
